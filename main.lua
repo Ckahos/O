@@ -1,0 +1,6 @@
+--Let's try some procecess....
+local function main()
+a = {}
+print("kelvin")
+end 
+main()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  local 
