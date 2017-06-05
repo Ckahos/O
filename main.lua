@@ -42,7 +42,7 @@ langdon:update(dt)
   end
    b.body:setPosition(b.body:getX() - 4,b.body:getY())
 end
-function beginContact(x,y,coll)
+function beginContact(a,b,coll)
 x,y = coll:getNormal()
 text = text .. "\n" .. a:getUserData() .. " colliding with " .. b:getUserData() .. " with a vector normal of: " .. x .. ", " ..y
 end
