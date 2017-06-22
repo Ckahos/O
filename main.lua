@@ -1,58 +1,77 @@
 function love.load()
+langdon = love.physics.newWorld(0,20*20, true)
 love.window.setFullscreen(true,"desktop")
 xw,yw = love.graphics.getDimensions()
-love.physics.setMeter(20)
-langdon = love.physics.newWorld(0,25*20, true)
-langdon:setCallbacks(beginContact,endContact,preSolve,postSolve)
-    ball = {}
-    ball.body = love.physics.newBody(langdon,xw/2,yw/2, "dynamic")
-    ball.shape = love.physics.newCircleShape(20)
-    ball.f = love.physics.newFixture(ball.body, ball.shape)
-    ball.f:setRestitution(0.7)
-    ball.f:setUserData("Ball")
-    block = {}
-    block.body = love.physics.newBody(langdon,xw/2,yw+100)
-    block.shape = love.physics.newRectangleShape(400,500)
-    block.f = love.physics.newFixture(block.body,block.shape)
-    block.f:setRestitution(0.7)
-    block.f:setUserData("Block")
-     text = ""
-     persisting = 0
+langdon:setCallbacks(bCont,eCont,pS,eS) 
+c ={} -- Ball(first)
+ c.a = love.physics.newBody(langdon,xw/2,yw/2, true)
+ c.s = love.physics.newCircleShape(20)
+ c.f = love.physics.newFixture(c.a,c.s)
+ c.f:setUserData("Ball")
+a = {} -- Ball2(second)
+a.a = love.physics.newBody(langdon,c.a:getX(),c.a:getY() + 100,"dynamic")
+a.s = love.physics.newCircleShape(10)
+a.f = love.physics.newFixture(a.a,a.s)
+a.f:setUserData("Ball2")
+dist,x1,x2,y1,y2 = love.physics.getDistance(c.f,a.f)
+b = {} -- Rope(first)
+b.s = love.physics.newPolygonShape(c.a:getX(),c.a:getY(),a.a:getX(),a.a:getY(), 0,0)
+dist,x1,y1,x2,y2 = love.physics.getDistance(c.f,a.f)
+b.a = love.physics.newBody(langdon,x1,x2)
+b.f = love.physics.newFixture(b.a,b.s)
+b.f:setUserData("Rope")
+z,m,h = love.graphics.getBackgroundColor()
+g = {} -- Third Ball
+g.a = love.physics.newBody(langdon,c.a:getX() + 150,c.a:getY() - 100)
+g.s = love.physics.newCircleShape(100)
+g.f = love.physics.newFixture(g.a,g.s)
+g.f:setUserData("Ball3")
+dist1,a1,a2,b1,b2 = love.physics.getDistance(g.f,c.f)
+f = {} -- Second Rope..
+f.a = love.physics.newBody(langdon,a1,a2)
+f.s = love.physics.newPolygonShape(c.a:getX(),c.a:getY(),g.a:getX(),g.a:getY(),0,0)
+f.f = love.physics.newFixture(f.a,f.s)
+f.f:setUserData("Rope2")
+t = {} -- The fourth Ball
+t.a = love.physics.newBody(langdon,f.a:getX() - 234,f.a:getY())
+t.s = love.physics.newCircleShape(134)
+t.f = love.physics.newFixture(t.a,t.s)
+t.f:setUserData("Ball4") 
+dist2,x1,x2,n1,n2 = love.physics.getDistance(t.f,f.f)
+x = {} -- The third rope...
+x.a = love.physics.newBody(langdon,x1,x2)
+x.s = love.physics.newPolygonShape(g.a:getX(),g.a:getY(),t.a:getX(),t.a:getY(),0,0)
+x.f = love.physics.newFixture(x.a,x.s)
+x.f:setUserData("Rope3")
 end
-function love.draw()
-love.graphics.setColor(255,255,255)
-love.graphics.circle("line", ball.body:getX(),ball.body:getY(),ball.shape:getRadius())
-love.graphics.setColor(255,255,255)
-love.graphics.polygon("line",block.body:getWorldPoints(block.shape:getPoints()))
---love.graphics.print(xw .. "||".. yw)
---love.graphics.print(love.system.getOS(),0,23)
-love.graphics.print(text,xw,yw)
-end
+function love.draw() -- (-_-)
+love.graphics.setBackgroundColor(0,0,0)
+love.graphics.setColor(255,255,255,255)
+love.graphics.circle("fill",c.a:getX(),c.a:getY(),c.s:getRadius())
+love.graphics.setColor(255,255,255,255)
+love.graphics.print(xw .. "||".. yw)
+love.graphics.print("Operating system: "..love.system.getOS(),0,40)
+love.graphics.print("Processor count: "..love.system.getProcessorCount(),0,55)
+love.graphics.print("Ball1: " .. c.a:getX() .."||"..c.a:getY(),0,75)
+love.graphics.print("Ball2: "..a.a:getX() .. "||".. a.a:getY(),0,130)
+love.graphics.print("Back_Color: ".. z ..",".. m ..",".. h,0,160)
+love.graphics.circle("fill",a.a:getX(),a.a:getY(),a.s:getRadius())
+love.graphics.setColor(123,2,67)
+love.graphics.line(x1,y1,x2,y2)
+love.graphics.setColor(255,34,100)
+love.graphics.circle("fill",g.a:getX(),g.a:getY(),g.s:getRadius())
+love.graphics.setColor(123,10,70)
+love.graphics.line(a1,a2,b1,b2)
+love.graphics.setColor(123,255,89)
+love.graphics.line(x1,x2,n1,n2)
+love.graphics.setColor(100,20,67)
+love.graphics.circle("fill",t.a:getX(),t.a:getY(),t.s:getRadius())
+end 
 function love.update(dt)
 langdon:update(dt)
-if love.keyboard.isDown('space') then
-    ball.body:applyForce(0,-1789)
-elseif love.keyboard.isDown('right') then
-     ball.body:applyForce(2000,0)
+if love.keyboard.isDown('right') then
+           a.a:applyForce(234,0)
 elseif love.keyboard.isDown('left') then
-     ball.body:applyForce(-2000,0)
+           a.a:applyForce(-235,0)
 end
-end
-function beginContact(a,b,coll)
-x,y = coll:getNormal()
-text = text .. "\n" .. a:getUserData() .. " colliding with " .. b:getUserData() .. "with a vector normal of: " .. x ..", " .. y
-end
-function endContact(a,b,coll)
-persisting = 0
-text = text .. "\n" .. a:getUserData() .. " uncolliding with " .. b:getUserData()
-end
-function preSolve(a,b,coll)
-      if persisting == 0 then 
-       text = text .. "\n" ..a:getUserData() .. " touching " .. b:getUserData()
-       elseif persisting < 20 then
-        text = text .. " " .. persisting
-      end
-      persisting = persisting + 1
-      end
-function endSolve(a,b,coll,normalimpulse,tangentimpulse)
- end
+end 
